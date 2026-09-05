@@ -1,0 +1,54 @@
+body {
+  margin: 0 auto;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  max-width: 1260px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  margin-bottom: 40px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+
+  .logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4); // Градиентный текст логотипа
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 16px;
+
+    .active-link {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+.main-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.router-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+}

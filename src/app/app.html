@@ -1,0 +1,35 @@
+<header>
+    <mat-toolbar color="primary" class="navbar">
+    <span class="logo" routerLink="/">Places Tracker</span>
+    
+    <span class="spacer"></span>
+
+    <nav class="nav-links">
+        <a 
+        class="router-link"
+        mat-button 
+        routerLink="/" 
+        routerLinkActive="active-link" 
+        [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon>search</mat-icon>
+        Search
+        </a>
+
+        <a
+        class="router-link" 
+        mat-button 
+        routerLink="/wishlist" 
+        routerLinkActive="active-link"
+        [matBadge]="wishlistService.wishlistPlaces().length"
+        [matBadgeHidden]="wishlistService.wishlistPlaces().length === 0"
+        matBadgeColor="accent">
+        <mat-icon>favorite</mat-icon>
+        Wishlist
+        </a>
+    </nav>
+    </mat-toolbar>
+</header>
+
+<main class="main-content">
+    <router-outlet></router-outlet>
+</main>
