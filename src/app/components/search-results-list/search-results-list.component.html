@@ -1,0 +1,64 @@
+<div class="results-container">
+  @if (selectedPlace(); as place) {
+    <app-place-details [place]="place" />
+  } 
+  @else if (searchResults().length > 0) {
+    @if (availableCategories().length > 0) {
+      <div class="filter-bar">
+        <mat-form-field appearance="outline" class="category-select-field">
+          <mat-label>Filter by category</mat-label>
+          <mat-select 
+            [value]="selectedCategoryName()" 
+            (selectionChange)="selectedCategoryName.set($event.value)">
+            
+            <mat-option [value]="null">
+              <em>All categories ({{ searchResults().length }})</em>
+            </mat-option>
+            
+            @for (cat of availableCategories(); track cat.name) {
+              <mat-option [value]="cat.name">
+                <div class="category-option">
+                  @if (cat.iconUrl) {
+                    <img [src]="cat.iconUrl" [alt]="cat.name" class="cat-icon" />
+                  }
+                  <span class="cat-name">{{ cat.name }}</span>
+                  <span class="cat-count">({{ cat.count }})</span>
+                </div>
+              </mat-option>
+            }
+          </mat-select>
+
+          @if (selectedCategoryName()) {
+            <button 
+              type="button"
+              mat-icon-button 
+              matSuffix 
+              aria-label="clear category" 
+              (click)="selectedCategoryName.set(null); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </div>
+    }
+    <div class="results-list">
+      @for (place of filteredPlaces(); track place.fsq_place_id) {
+        <app-place-details [place]="place" />
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+      </div>
+      <p class="title">No places found</p>
+      <p class="description">
+        We couldn't find any locations matching your search. Try checking for typos or searching for a different area.
+      </p>
+    </div>
+  }
+</div>
