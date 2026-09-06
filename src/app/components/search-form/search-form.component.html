@@ -1,0 +1,115 @@
+<form [formGroup]="searchForm">
+  <mat-form-field class="example-full-width">
+    <mat-label>Find places</mat-label>
+    <input type="text"
+          placeholder="Start typing"
+          aria-label="Search destinations"
+          matInput
+          formControlName="searchField"
+          [matAutocomplete]="auto">
+    <mat-autocomplete
+      autoActiveFirstOption 
+      #auto="matAutocomplete" 
+      [displayWith]="displayFn" 
+      (optionSelected)="onPlaceSelected($event)">
+    <mat-option class="geolocation-option">
+        <div class="geo-panel" (click)="$event.stopPropagation()">
+          <div class="slider-container">
+            <div class="slider-header">
+              <h2>What's around?</h2>
+              <mat-slider
+                min="1"
+                max="100000"
+                step="1000"
+                showTickMarks
+                discrete
+                [displayWith]="formatLabel">
+                <input matSliderThumb [value]="selectedRadius()" (valueChange)="onRadiusChange($event)">
+              </mat-slider>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            mat-flat-button 
+            color="primary"
+            class="geo-btn"
+            [disabled]="isLoadingLocation()"
+            (click)="useCurrentLocation(); $event.stopPropagation()">
+            @if (isLoadingLocation()) {
+              <mat-spinner diameter="18" />
+            } @else {
+              <mat-icon>my_location</mat-icon>
+              <span>Nearby</span>
+            }
+          </button>
+        </div>
+      </mat-option>
+
+      <mat-divider></mat-divider>
+    @for (option of foundPlaces(); track option.fsq_place_id) {
+      <mat-option [value]="option">
+        <div class="flex flex-col">
+          <span>{{ option.name }}</span>
+          @if (option.location?.formatted_address) {
+            <small style="opacity: 0.7; font-size: 0.8em;">
+              {{ option.location?.formatted_address }}
+            </small>
+          }
+        </div>
+      </mat-option>
+    }
+    </mat-autocomplete>
+  </mat-form-field>
+</form>
+
+<div class="results-container">
+  @if (selectedPlace(); as place) {
+    <app-place-details [place]="place" />
+  } 
+  @else if (searchResults().length > 0) {
+    @if (availableCategories().length > 0) {
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="category-select-field">
+      <mat-label>Filter by category</mat-label>
+      <mat-select 
+        [value]="selectedCategoryName()" 
+        (selectionChange)="selectedCategoryName.set($event.value)">
+        
+        <mat-option [value]="null">
+          <em>All categories ({{ rawPlaces().length }})</em>
+        </mat-option>
+        
+        @for (cat of availableCategories(); track cat.name) {
+          <mat-option [value]="cat.name">
+            <div class="category-option">
+              @if (cat.iconUrl) {
+                <img [src]="cat.iconUrl" [alt]="cat.name" class="cat-icon" />
+              }
+              <span class="cat-name">{{ cat.name }}</span>
+              <span class="cat-count">({{ cat.count }})</span>
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (selectedCategoryName()) {
+        <button 
+          type="button"
+          mat-icon-button 
+          matSuffix 
+          aria-label="clear category" 
+          (click)="selectedCategoryName.set(null); $event.stopPropagation()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+  </div>
+}
+<div class="results-list">
+  @for (place of filteredPlaces(); track place.fsq_place_id) {
+    <app-place-details [place]="place" />
+  }
+</div>
+  }
+</div>

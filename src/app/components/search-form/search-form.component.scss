@@ -1,0 +1,49 @@
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+.geo-btn {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.categories-bar {
+  margin: 12px 0 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  mat-chip-listbox {
+    display: inline-flex;
+    gap: 8px;
+  }
+
+  .cat-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0.2);
+  }
+}
+
+.no-results {
+  text-align: center;
+  color: #64748b;
+  padding: 20px 0;
+}
+
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .cat-icon {
+    width: 20px;
+    height: 20px;
+  }
+}

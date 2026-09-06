@@ -1,0 +1,61 @@
+@if (place(); as details) {
+  <mat-card class="place-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>{{ details.name }}</mat-card-title>
+
+      <button 
+        mat-flat-button 
+        [color]="isSaved(details.fsq_place_id) ? 'warn' : 'primary'"
+        (click)="onToggleWishlist(details)">
+        <mat-icon>{{ isSaved(details.fsq_place_id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+        {{ isSaved(details.fsq_place_id) ? 'Remove from wishlist' : 'Add to wishlist' }}
+      </button>
+
+      @if (details.location?.locality || details.location?.country) {
+        <mat-card-subtitle>
+          {{ details.location?.locality }}{{ details.location?.locality && details.location?.country ? ', ' : '' }}{{ details.location?.country }}
+        </mat-card-subtitle>
+      }
+    </mat-card-header>
+
+    <mat-card-content class="content-container">
+        @if (details.categories && details.categories.length > 0) {
+        <div class="categories-list">
+          @for (cat of details.categories; track cat.fsq_category_id) {
+            <span class="category-badge">{{ cat.name }}</span>
+          }
+        </div>
+      }
+
+      @if (details.location?.formatted_address || details.geocodes?.main) {
+        <div class="info-row">
+          <a 
+            [href]="getGoogleMapsUrl(details)" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="map-link"
+            title="Open in Google Maps">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ details.location?.formatted_address || 'View on Google Maps' }}</span>
+            <mat-icon class="external-icon">open_in_new</mat-icon>
+          </a>
+        </div>
+      }
+
+      @if (details.latitude && details.longitude) {
+        <div class="info-row coordinates">
+          <a 
+            [href]="getCoordinatesUrl(details.latitude, details.longitude)" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="coord-link"
+            title="Посмотреть координаты на карте">
+            <mat-icon>my_location</mat-icon>
+            <span>{{ details.latitude }}, {{ details.longitude }}</span>
+            <mat-icon class="external-icon">open_in_new</mat-icon>
+          </a>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+}
