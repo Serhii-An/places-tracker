@@ -4,13 +4,6 @@ import { map, Observable, of, tap } from 'rxjs';
 import { FoursquarePlace, FoursquareSearchResponse } from '../models/place.model';
 import { CacheService } from './cache-service';
 
-interface CacheEntry<T> {
-  data: T;
-  expiry: number;
-}
-
-const CACHE_TIME_MS = 600000;
-
 @Injectable({
   providedIn: 'root',
 })

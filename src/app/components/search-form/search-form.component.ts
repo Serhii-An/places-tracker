@@ -7,13 +7,12 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent, MatAutocompleteTri
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { of } from 'rxjs';
 import { MatInput } from '@angular/material/input';
-import { CategoryFilter, FoursquarePlace, FoursquareSearchResponse } from '../../models/place.model';
-import { PlaceDetailsComponent } from '../place-details/place-details.component';
+import { FoursquarePlace, FoursquareSearchResponse } from '../../models/place.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { MatDivider } from '@angular/material/divider';
-import { MatSelect } from '@angular/material/select';
+import { SearchResultsListComponent } from '../search-results-list/search-results-list.component';
 
 @Component({
   selector: 'app-search-form',
@@ -27,8 +26,8 @@ import { MatSelect } from '@angular/material/select';
     MatSlider,
     MatDivider,
     MatSliderThumb,
-    MatSelect,
-    PlaceDetailsComponent],
+    SearchResultsListComponent
+  ],
   templateUrl: './search-form.component.html',
   styleUrl: './search-form.component.scss',
 })
@@ -50,49 +49,6 @@ export class SearchFormComponent {
   formatLabel(value: number): string {
     return `${Math.round(value / 1000)}`;
   }
-  
-  readonly rawPlaces = signal<FoursquarePlace[]>([]);
-  readonly selectedCategoryName = signal<string | null>(null);
-
-  readonly availableCategories = computed<CategoryFilter[]>(() => {
-    const places = this.rawPlaces();
-    const categoriesMap = new Map<string, CategoryFilter>();
-
-    places.forEach(place => {
-      place.categories?.forEach((cat: any) => {
-        const catName = cat.name?.trim();
-        if (!catName) return;
-
-        const existing = categoriesMap.get(catName);
-        if (existing) {
-          existing.count += 1;
-        } else {
-          const iconUrl = cat.icon 
-            ? `${cat.icon.prefix}bg_32${cat.icon.suffix}` 
-            : undefined;
-
-          categoriesMap.set(catName, {
-            name: catName,
-            iconUrl,
-            count: 1
-          });
-        }
-      });
-    });
-
-    return Array.from(categoriesMap.values()).sort((a, b) => b.count - a.count);
-  });
-
-  readonly filteredPlaces = computed(() => {
-    const places = this.rawPlaces();
-    const selectedName = this.selectedCategoryName();
-
-    if (!selectedName) return places;
-
-    return places.filter(place => 
-      place.categories?.some((cat: any) => cat.name?.trim() === selectedName)
-    );
-  });
 
 
   useCurrentLocation(): void {
@@ -103,7 +59,6 @@ export class SearchFormComponent {
 
     this.isLoadingLocation.set(true);
     this.locationError.set(null);
-    this.selectedCategoryName.set(null);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -114,7 +69,6 @@ export class SearchFormComponent {
           next: (places) => {
             this.selectedPlace.set(null);
             this.searchResults.set(places);
-            this.rawPlaces.set(places);
             this.isLoadingLocation.set(false);
             this.autocompleteTrigger?.closePanel();
           },

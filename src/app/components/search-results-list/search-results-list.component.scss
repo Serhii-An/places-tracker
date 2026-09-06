@@ -1,0 +1,50 @@
+.category-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .cat-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: #f9fafb;
+    border: 1px dashed #e5e7eb;
+    border-radius: 12px;
+    margin: 2rem 0;
+
+    .title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0 0 0.5rem 0;
+    }
+}
+
+.icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    border-radius: 50%;
+    margin-bottom: 1.25rem;
+}
+
+.description {
+    font-size: 0.95rem;
+    color: #6b7280;
+    max-width: 360px;
+    margin: 0;
+    line-height: 1.5;
+}

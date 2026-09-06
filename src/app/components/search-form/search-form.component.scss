@@ -1,11 +1,12 @@
 .mat-mdc-form-field {
-    width: 100%;
+  width: 100%;
 }
 
 .geo-btn {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .categories-bar {
@@ -35,15 +36,4 @@
   text-align: center;
   color: #64748b;
   padding: 20px 0;
-}
-
-.category-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  .cat-icon {
-    width: 20px;
-    height: 20px;
-  }
 }
