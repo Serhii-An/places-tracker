@@ -19,18 +19,22 @@ export class DataService {
     Authorization: 'Bearer NQ3ZGDZUE5FNOCI5X3SJAOUNVJBZ1LR4CEYKK0A21MP1DP2R'
   });
 
-  getPlaces(query: string): Observable<FoursquareSearchResponse> {
-    const cacheKey = query.trim().toLowerCase();
+  getPlaces(searchStr: string, radius: number): Observable<FoursquareSearchResponse> {
+    const cacheKey = searchStr.trim().toLowerCase();
     const cachedData = this.cache.get<FoursquareSearchResponse>(cacheKey);
 
     if (cachedData) {
       return of(cachedData);
     }
 
+    const params = new HttpParams()
+      .set('query', searchStr)
+      .set('radius', radius)
+
 
     return this.http.get<FoursquareSearchResponse>(`${this.apiUrl}/search`, {
       headers: this.headers,
-      params: {query}
+      params
     }).pipe(
       tap((response) => {
         this.cache.set(cacheKey, response);

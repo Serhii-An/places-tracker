@@ -12,55 +12,60 @@
       #auto="matAutocomplete" 
       [displayWith]="displayFn" 
       (optionSelected)="onPlaceSelected($event)">
-    <mat-option class="geolocation-option">
-        <div class="geo-panel" (click)="$event.stopPropagation()">
-          <div class="slider-container">
-            <div class="slider-header">
-              <h2>What's around?</h2>
-              <mat-slider
-                min="1"
-                max="100000"
-                step="1000"
-                showTickMarks
-                discrete
-                [displayWith]="formatLabel">
-                <input matSliderThumb [value]="selectedRadius()" (valueChange)="onRadiusChange($event)">
-              </mat-slider>
+        <mat-option class="geolocation-option">
+          <div class="geo-panel" (click)="$event.stopPropagation()">
+            <div class="slider-container">
+              <div class="slider-header">
+                <h2>What's around?</h2>
+                <mat-slider
+                  [min]="1000"
+                  [max]="100000"
+                  [step]="1000"
+                  showTickMarks
+                  discrete
+                  [displayWith]="formatLabel">
+                  <input matSliderThumb [value]="selectedSearchRadius()" (input)="onRadiusChange($event)">
+                </mat-slider>
+              </div>
             </div>
+
+            <button 
+              type="button" 
+              mat-flat-button 
+              color="primary"
+              class="geo-btn"
+              [disabled]="isLoadingLocation()"
+              (click)="useCurrentLocation(); $event.stopPropagation()">
+              @if (isLoadingLocation()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                <mat-icon>my_location</mat-icon>
+                <span>Nearby({{selectedRadiusKm()}}km)</span>
+              }
+            </button>
           </div>
+        </mat-option>
 
-          <button 
-            type="button" 
-            mat-flat-button 
-            color="primary"
-            class="geo-btn"
-            [disabled]="isLoadingLocation()"
-            (click)="useCurrentLocation(); $event.stopPropagation()">
-            @if (isLoadingLocation()) {
-              <mat-spinner diameter="18" />
-            } @else {
-              <mat-icon>my_location</mat-icon>
-              <span>Nearby({{selectedRadiusKm()}}km)</span>
-            }
-          </button>
-        </div>
-      </mat-option>
-
-      <mat-divider></mat-divider>
-    @for (option of foundPlaces(); track option.fsq_place_id) {
-      <mat-option [value]="option">
-        <div class="flex flex-col">
-          <span>{{ option.name }}</span>
-          @if (option.location?.formatted_address) {
-            <small style="opacity: 0.7; font-size: 0.8em;">
-              {{ option.location?.formatted_address }}
-            </small>
-          }
-        </div>
-      </mat-option>
-    }
+        <mat-divider></mat-divider>
+        @for (option of foundPlaces(); track option.fsq_place_id) {
+          <mat-option [value]="option">
+            <div class="flex flex-col">
+              <span>{{ option.name }}</span>
+              @if (option.location?.formatted_address) {
+                <small style="opacity: 0.7; font-size: 0.8em;">
+                  {{ option.location?.formatted_address }}
+                </small>
+              }
+            </div>
+          </mat-option>
+        }
+        @if (!foundPlaces().length && this.hasSearched()) {
+          <mat-option disabled class="no-results-option">
+            No matches found
+          </mat-option>
+        }
     </mat-autocomplete>
   </mat-form-field>
 </form>
 
-<app-search-results-list [selectedPlace]="selectedPlace()" [searchResults]="searchResults()" />
+<app-search-results-list [searchResults]="searchResults()" [hasSearched]="hasSearched()" />

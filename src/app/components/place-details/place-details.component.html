@@ -27,6 +27,12 @@
         </div>
       }
 
+      @if (details.distance) {
+        <div class="info-row coordinates">
+          <span>Distance from you: {{ details.distance / 1000 | number: '1.2-2' }}km</span>
+        </div>
+      }
+
       @if (details.location?.formatted_address || details.geocodes?.main) {
         <div class="info-row">
           <a 
