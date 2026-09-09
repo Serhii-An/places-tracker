@@ -39,12 +39,12 @@ export class SearchFormComponent {
     searchField: new FormControl('')
   });
 
-  selectedPlace = signal<FoursquarePlace | null>(null);
   readonly searchResults = signal<FoursquarePlace[]>([]);
   readonly isLoadingLocation = signal(false);
   readonly locationError = signal<string | null>(null);
-  readonly selectedRadius = signal<number>(5000);
-  readonly selectedRadiusKm = computed(() => Math.round(this.selectedRadius() / 1000));
+  readonly selectedSearchRadius = signal<number>(5000);
+  readonly selectedRadiusKm = computed(() => Math.round(this.selectedSearchRadius() / 1000));
+  readonly hasSearched = signal(false);
   
   formatLabel(value: number): string {
     return `${Math.round(value / 1000)}`;
@@ -63,14 +63,13 @@ export class SearchFormComponent {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const radius = this.selectedRadius();
         
-        this.dataService.getPlacesByCoordinates(latitude, longitude, radius).subscribe({
+        this.dataService.getPlacesByCoordinates(latitude, longitude, this.selectedSearchRadius()).subscribe({
           next: (places) => {
-            this.selectedPlace.set(null);
             this.searchResults.set(places);
             this.isLoadingLocation.set(false);
             this.autocompleteTrigger?.closePanel();
+            this.hasSearched.set(true);
           },
           error: (err) => {
             console.error('Geolocation search error:', err);
@@ -107,12 +106,12 @@ export class SearchFormComponent {
         if (!query.trim()) {
           return of([]);
         }
-        return this.dataService.getPlaces(query).pipe(
-          map((res: FoursquareSearchResponse) => res.results ?? [])
+        return this.dataService.getPlaces(query, this.selectedSearchRadius()).pipe(
+          map((res: FoursquareSearchResponse) => res.results ?? []),
         );
       })
     ),
-    { initialValue: [] }
+    {initialValue: []}
   );
 
 
@@ -127,12 +126,11 @@ export class SearchFormComponent {
     if (selectedPlace?.fsq_place_id) {
       this.dataService.getPlaceDetails(selectedPlace.fsq_place_id).subscribe({
         next: (details) => {
-          this.selectedPlace.set(details);
-          this.searchResults.set([]);
+          this.searchResults.set([details]);
           this.autocompleteTrigger?.closePanel();
         },
         error: (err) => {
-          this.selectedPlace.set(null);
+          this.searchResults.set([]);
           console.error('Error:', err);
         }
       });
@@ -140,7 +138,8 @@ export class SearchFormComponent {
   }
 
 
-  onRadiusChange(radius: number): void {
-    this.selectedRadius.set(radius);
+  onRadiusChange(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    this.selectedSearchRadius.set(value);
   }
 }

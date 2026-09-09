@@ -5,9 +5,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { WishlistService } from '../../services/wishlist-service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
-  imports: [MatCardModule, MatChipsModule, MatIconModule, MatButtonModule],
+  imports: [MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, DecimalPipe],
   selector: 'app-place-details',
   styleUrl: './place-details.component.scss',
   templateUrl: './place-details.component.html',

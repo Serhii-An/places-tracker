@@ -1,8 +1,5 @@
 <div class="results-container">
-  @if (selectedPlace(); as place) {
-    <app-place-details [place]="place" />
-  } 
-  @else if (searchResults().length > 0) {
+  @if (searchResults().length > 0) {
     @if (availableCategories().length > 0) {
       <div class="filter-bar">
         <mat-form-field appearance="outline" class="category-select-field">
@@ -39,6 +36,23 @@
             </button>
           }
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="category-select-field">
+          <mat-label>Filter by</mat-label>
+          <mat-select 
+            [value]="selectedSortType()" 
+            (selectionChange)="selectedSortType.set($event.value)">
+            <mat-option value="default">
+              <em>Default</em>
+            </mat-option>
+            <mat-option value="distance">
+              <em>Distance</em>
+            </mat-option>
+            <mat-option value="name">
+              <em>Name</em>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     }
     <div class="results-list">
@@ -46,7 +60,7 @@
         <app-place-details [place]="place" />
       }
     </div>
-  } @else {
+  } @else if (hasSearched()) {
     <div class="empty-state">
       <div class="icon-wrapper">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
