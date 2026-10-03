@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable, of, tap } from 'rxjs';
 import { FoursquarePlace, FoursquareSearchResponse } from '../models/place.model';
 import { CacheService } from './cache-service';
@@ -13,11 +13,6 @@ export class DataService {
   private cache = inject(CacheService);
 
   private apiUrl = '/api-foursquare/places';
-  private headers = new HttpHeaders({
-    'X-Places-Api-Version': '2025-06-17',
-    accept: 'application/json',
-    Authorization: 'Bearer NQ3ZGDZUE5FNOCI5X3SJAOUNVJBZ1LR4CEYKK0A21MP1DP2R'
-  });
 
   getPlaces(searchStr: string, radius: number): Observable<FoursquareSearchResponse> {
     const cacheKey = searchStr.trim().toLowerCase();
@@ -32,10 +27,7 @@ export class DataService {
       .set('radius', radius)
 
 
-    return this.http.get<FoursquareSearchResponse>(`${this.apiUrl}/search`, {
-      headers: this.headers,
-      params
-    }).pipe(
+    return this.http.get<FoursquareSearchResponse>(`${this.apiUrl}/search`, {params}).pipe(
       tap((response) => {
         this.cache.set(cacheKey, response);
       })
@@ -56,7 +48,7 @@ export class DataService {
       .set('limit', '20')
 
     return this.http.get<{ results: FoursquarePlace[] }>(`${this.apiUrl}/search`, 
-      { headers: this.headers, params }
+      {params}
     ).pipe(
       map(response => response.results),
       tap((places) => {
@@ -72,9 +64,7 @@ export class DataService {
       return of(cachedData);
     }
 
-    return this.http.get<FoursquarePlace>(`${this.apiUrl}/${id}`, {
-      headers: this.headers
-    }).pipe(
+    return this.http.get<FoursquarePlace>(`${this.apiUrl}/${id}`).pipe(
       tap((response) => {
         this.cache.set(id, response);
       })
